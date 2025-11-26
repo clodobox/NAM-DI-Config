@@ -1,0 +1,17 @@
+{
+  "train": {
+    "start_seconds": null,
+    "stop_seconds": null,
+    "ny": 8192
+  },
+  "validation": {
+    "start_seconds": null,
+    "stop_seconds": null,
+    "ny": 8192
+  },
+  "common": {
+    "x_path": "input.wav",
+    "y_path": "output.wav",
+    "delay": 0
+  }
+}
