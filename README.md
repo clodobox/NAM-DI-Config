@@ -1,3 +1,4 @@
+
 # NAM Training Config (Tone3000‑style Simple Setup)
 
 This repo contains a minimal setup to train a Neural Amp Modeler (NAM) model from your own DI + amp recordings, using the `nam-full` command.
@@ -13,15 +14,11 @@ It assumes:
 - **GitHub repository** (source code, issues, releases): <https://github.com/sdatkinson/neural-amp-modeler>
 - **Documentation** : <https://neural-amp-modeler.readthedocs.io/en/latest/>
 
-
 ## 1. Requirements
 
-- Python **3.10+** (3.10, 3.11, 3.12 are fine)
+- Python **3.10+**
 - `pip` (Python package manager)
-- A terminal / command prompt
-
-You do **not** need a GPU; training will run on CPU (slower but fine for small models).
-
+- Ideally Linux for GPU acceleration support
 
 ## 2. Create a Python virtual environment
 
@@ -82,7 +79,7 @@ Requirements:
 
 - Same **sample rate**
 - Same **bit depth**
-- Same **number of samples** (same length)
+- Same **number of samples**
 
 Place both files in the same folder as this `README.md` and the JSON config files.
 
@@ -119,35 +116,20 @@ Explanation:
 - `learning.json` – trainer / dataloader configuration
 - `final` – output directory for checkpoints and logs
 
-During training you’ll see something like:
-
-```text
-GPU available: False, used: False
-TPU available: False, using: 0 TPU cores
-
-| Name | Type | Params | Mode
------------------------------------------
-0 | _net | WaveNet | 13.8 K | train
------------------------------------------
-...
-```
-
 Training time depends on:
 
-- CPU speed
+- CPU/GPU speed
 - Length of your audio
-- Model size (set in `model.json`)
-- `max_epochs` and other settings in `learning.json`
+- `max_epochs` settings in `learning.json`
 
 ## 7. Where is the trained model?
 
-After `nam-full` finishes, look inside the `final/` folder. You’ll typically see:
+After `nam-full` finishes, look inside the `final/` folder. You’ll see:
 
-- Checkpoints (e.g. `.ckpt` files)
 - Logs
-- A final exported NAM model (depending on config / version)
+- A final exported NAM model
 
-You can then load it in your VST plugin compatible !
+You can then load it in your VST plugin NAM compatible !
 
 ## 8. Using the GPU instead of the CPU
 
@@ -159,10 +141,19 @@ In `learning.json`, change the `accelerator` field, for example:
 "trainer": {
 "accelerator": "gpu",
 "devices": 1,
-"max_epochs": 10,
+"max_epochs": 100,
 "num_sanity_val_steps": 0
 }
 ```
+To install the PyTorch dependencies according to your hardware, you can use this site: https://pytorch.org/get-started/locally/
+
+Regarding compatibility, here is what I found:
+- Nvidia [CUDA](https://developer.nvidia.com/cuda-gpus) compatible GPU
+- Intel [Meteor Lake](https://www.intel.com/content/www/us/en/ark/products/codename/90353/products-formerly-meteor-lake.html) iGPU and above 
+- Intel [Alchemist](https://www.intel.com/content/www/us/en/ark/products/codename/226095/products-formerly-alchemist.html) GPU
+- AMD (only on linux): I'll let you check if your GPU supports ROCm 6.4
+
+**You will certainly have fewer problems on Linux.**
 
 If this still does not work, you can consult the official documentation: <https://neural-amp-modeler.readthedocs.io/en/latest/installation.html#trouble-using-the-gpu>
 
@@ -187,4 +178,5 @@ If you discover you *do* have latency between DI and amp tracks:
 3. Run `nam-full` again.
 
 It’s usually safer to **slightly overestimate** delay (e.g. use 90 if you measured ~80) than to underestimate, so the model never has to “predict the future.”
-However, if you have captured the input and output at the same time (guitar DI + amp loadbox in the same audio interface at the same time, for example), you can keep it at 0 for the best result.
+
+**However, if you have captured the input and output at the same time (guitar DI + amp loadbox in the same audio interface at the same time, for example), you can keep it at 0 for the best result.**
